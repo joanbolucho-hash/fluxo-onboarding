@@ -1131,15 +1131,16 @@ btn.addEventListener('click', () => {
   };
 
   // Send to n8n webhook
-  const WEBHOOK = 'https://appwebhook.fluxo.consulting/webhook/fluxo-onboarding';
+  const WEBHOOK = 'https://appn8napp.fluxo.consulting/webhook/fluxo-onboarding';
   if (WEBHOOK !== 'WEBHOOK_URL_PLACEHOLDER') {
     fetch(WEBHOOK, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(data)
     }).then(() => {
-      // Poll for completion or wait for a signal
-    }).catch(() => {});
+      console.log('Webhook sent successfully');
+    }).catch((err) => { console.error('Webhook error:', err); });
   }
 
   // Simulate completion after some time (will be replaced by real webhook callback)
