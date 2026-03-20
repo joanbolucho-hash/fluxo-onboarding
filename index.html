@@ -1133,9 +1133,12 @@ btn.addEventListener('click', () => {
   // Send to n8n webhook
   const WEBHOOK = 'https://appn8napp.fluxo.consulting/webhook/fluxo-onboarding';
   if (WEBHOOK !== 'WEBHOOK_URL_PLACEHOLDER') {
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-    const sent = navigator.sendBeacon(WEBHOOK, blob);
-    console.log('Beacon sent:', sent);
+    fetch(WEBHOOK, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(data)
+    }).catch(() => {});
   }
 
   // Simulate completion after some time (will be replaced by real webhook callback)
