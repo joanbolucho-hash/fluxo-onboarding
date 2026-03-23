@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efecto Solar - Sistema de AutomatizaciÃ³n v2 | Fluxo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --solar: #F59E0B;
+    --solar-light: #FBBF24;
+    --solar-dark: #D97706;
+    --solar-glow: rgba(245,158,11,0.15);
+    --bg: #030712;
+    --bg-card: #0F172A;
+    --bg-card-hover: #1E293B;
+    --border: #1E293B;
+    --text: #E2E8F0;
+    --text-muted: #94A3B8;
+    --green: #10B981;
+    --green-bg: rgba(16,185,129,0.1);
+    --red: #EF4444;
+    --blue: #3B82F6;
+    --purple: #8B5CF6;
+    --whatsapp: #25D366;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 80px 40px 60px;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.08) 0%, transparent 60%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-bg);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--green);
+    font-size: 0.8em;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+  .hero-badge .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .hero h1 { font-size: 3.2em; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -1px; }
+  .hero h1 span { background: linear-gradient(135deg, var(--solar), var(--solar-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .subtitle { color: var(--text-muted); font-size: 1.15em; font-weight: 400; max-width: 600px; margin: 0 auto 20px; line-height: 1.6; }
+  .hero .powered { color: var(--text-muted); font-size: 0.85em; }
+  .hero .powered strong { color: var(--solar); }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 900px;
+    margin: -30px auto 0;
+    position: relative;
+    z-index: 2;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .stat-item {
+    padding: 28px 20px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item .num { font-size: 2em; font-weight: 800; color: var(--solar); }
+  .stat-item .lbl { font-size: 0.78em; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+  /* Section */
+  .section { max-width: 1100px; margin: 60px auto; padding: 0 24px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .section-header .icon-box {
+    width: 40px; height: 40px;
+    background: var(--solar-glow);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+  }
+  .section-header h2 { font-size: 1.5em; font-weight: 700; color: #fff; }
+
+  /* Architecture cards */
+  .arch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .arch-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .arch-card:hover { border-color: var(--solar); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,158,11,0.08); }
+  .arch-card .ac-icon { font-size: 2.2em; margin-bottom: 12px; }
+  .arch-card .ac-title { font-size: 1.1em; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .arch-card .ac-role { font-size: 0.8em; color: var(--solar); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .arch-card .ac-desc { font-size: 0.85em; color: var(--text-muted); line-height: 1.5; }
+
+  /* Flow diagram */
+  .flow-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 32px;
+    overflow-x: auto;
+  }
+  .flow-label { font-size: 0.75em; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; }
+  .flow { display: flex; align-items: center; gap: 0; min-width: 850px; }
+  .flow-step {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    min-width: 155px;
+    max-width: 175px;
+    flex: 1;
+    transition: all 0.3s;
+  }
+  .flow-step:hover { border-color: var(--solar); }
+  .flow-step.highlight { border-color: var(--solar); background: rgba(245,158,11,0.03); }
+  .flow-step .fs-icon { font-size: 1.6em; margin-bottom: 8px; }
+  .flow-step .fs-title { font-size: 0.82em; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .flow-step .fs-desc { font-size: 0.7em; color: var(--text-muted); line-height: 1.4; }
+  .flow-step .fs-badge {
+    display: inline-block;
+    font-size: 0.6em;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+  .fs-badge.holded { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .fs-badge.n8n { background: rgba(245,158,11,0.15); color: var(--solar); }
+  .fs-badge.ghl { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .arrow-conn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .arrow-conn .line { width: 32px; height: 2px; background: linear-gradient(90deg, var(--border), var(--solar), var(--border)); }
+  .arrow-conn .dot { width: 6px; height: 6px; background: var(--solar); border-radius: 50%; margin-top: -4px; }
+
+  /* Pipeline */
+  .pipeline-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .pipeline { display: flex; gap: 4px; overflow-x: auto; }
+  .pipe-stage {
+    flex: 1;
+    min-width: 130px;
+    padding: 18px 12px;
+    text-align: center;
+    border-radius: 10px;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .pipe-stage:hover { transform: translateY(-2px); }
+  .pipe-stage .ps-name { font-weight: 700; font-size: 0.85em; color: #fff; }
+  .pipe-stage .ps-auto { font-size: 0.68em; color: rgba(255,255,255,0.6); margin-top: 6px; }
+  .pipe-stage.s1 { background: linear-gradient(135deg, #1E3A5F, #1E4D8C); }
+  .pipe-stage.s2 { background: linear-gradient(135deg, #2C4A6E, #3B6898); }
+  .pipe-stage.s3 { background: linear-gradient(135deg, #065F46, #059669); }
+  .pipe-stage.s4 { background: linear-gradient(135deg, #92400E, #B45309); }
+  .pipe-stage.s5 { background: linear-gradient(135deg, #065F46, #047857); }
+  .pipe-stage.lost { background: linear-gradient(135deg, #7F1D1D, #991B1B); }
+
+  /* Timeline */
+  .timeline-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+  }
+  .tl { position: relative; padding-left: 36px; }
+  .tl::before {
+    content: '';
+    position: absolute;
+    left: 14px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--solar), var(--green), var(--red));
+    border-radius: 2px;
+  }
+  .tl-item { position: relative; margin-bottom: 32px; }
+  .tl-item:last-child { margin-bottom: 0; }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -28px; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    background: var(--solar);
+  }
+  .tl-item.success::before { background: var(--green); }
+  .tl-item.danger::before { background: var(--red); }
+  .tl-day { font-weight: 700; font-size: 0.95em; color: #fff; margin-bottom: 4px; }
+  .tl-action { font-size: 0.88em; color: var(--text-muted); line-height: 1.5; }
+  .tl-channels { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .tl-ch {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid;
+  }
+  .tl-ch.wa { color: var(--whatsapp); border-color: rgba(37,211,102,0.3); background: rgba(37,211,102,0.08); }
+  .tl-ch.em { color: var(--blue); border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.08); }
+  .tl-ch.task { color: var(--solar); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); }
+
+  /* Data fields */
+  .fields-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .field-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .field-card .fc-label { font-size: 0.72em; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .field-card .fc-value { font-size: 1em; font-weight: 600; color: #fff; }
+  .field-card .fc-merge { font-size: 0.78em; color: var(--solar); font-family: 'Courier New', monospace; margin-top: 4px; }
+
+  /* Workflow table */
+  .wf-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .wf-table { width: 100%; border-collapse: collapse; }
+  .wf-table th {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 0.72em;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid var(--border);
+  }
+  .wf-table td {
+    padding: 14px 20px;
+    font-size: 0.88em;
+    border-bottom: 1px solid var(--border);
+  }
+  .wf-table tr:last-child td { border-bottom: none; }
+  .wf-table tr:hover td { background: rgba(245,158,11,0.02); }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.78em;
+    font-weight: 600;
+  }
+  .badge.active { background: var(--green-bg); color: var(--green); }
+  .badge.n8n { background: rgba(245,158,11,0.1); color: var(--solar); }
+  .badge.ghl { background: rgba(59,130,246,0.1); color: var(--blue); }
+
+  /* Important note */
+  .note {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--solar);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+  .note .note-title { font-weight: 700; font-size: 0.88em; color: var(--solar); margin-bottom: 6px; }
+  .note .note-text { font-size: 0.85em; color: var(--text-muted); line-height: 1.6; }
+  .note.critical { border-left-color: var(--red); }
+  .note.critical .note-title { color: var(--red); }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 48px 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+  footer .logo { font-size: 1.3em; font-weight: 800; color: var(--solar); margin-bottom: 8px; }
+  footer .copy { font-size: 0.8em; color: var(--text-muted); }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2em; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); margin: -20px 16px 0; }
+    .arch-grid { grid-template-columns: 1fr; }
+    .fields-grid { grid-template-columns: 1fr; }
+    .section { margin: 40px auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge"><div class="dot"></div> Sistema operativo â Todos los workflows activos</div>
+  <h1>Efecto Solar <span>Automatizado</span></h1>
+  <p class="subtitle">GestiÃ³n inteligente de presupuestos: desde la creaciÃ³n en Holded hasta el cobro, con seguimiento multicanal automÃ¡tico por WhatsApp y email.</p>
+  <p class="powered">Implementado por <strong>Fluxo</strong> Â· Marzo 2026 Â· v2</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="num">10m</div>
+    <div class="lbl">Tiempo de deteccion</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">2</div>
+    <div class="lbl">Canales automaticos</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">5</div>
+    <div class="lbl">Workflows activos</div>
+  </div>
+  <div class="stat-item">
+    <div class="num">0</div>
+    <div class="lbl">Intervencion manual</div>
+  </div>
+</div>
+
+<!-- Architecture -->
+<div class="section" style="margin-top: 80px;">
+  <div class="section-header">
+    <div class="icon-box">ð</div>
+    <h2>Arquitectura del Sistema</h2>
+  </div>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="ac-icon">ð</div>
+      <div class="ac-role">ERP / Facturacion</div>
+      <div class="ac-title">Holded</div>
+      <div class="ac-desc">Presupuestos, facturas y cobros. Bernard trabaja aqui. Es la unica fuente de verdad.</div>
+    </div>
+    <div class="arch-card">
+      <div class="ac-icon">ð</div>
+      <div class="ac-role">Puente de datos</div>
+      <div class="ac-title">n8n</div>
+      <div class="ac-desc">Sincroniza datos y tags entre Holded y GHL cada 10 minutos. No toca pipeline ni comunicaciones.</div>
+    </div>
+    <div class="arch-card">
+      <div class="ac-icon">ð</div>
+      <div class="ac-role">Logica de negocio</div>
+      <div class="ac-title">GoHighLevel</div>
+      <div class="ac-desc">Pipeline de ventas, seguimiento WhatsApp/Email, tareas internas. Toda la automatizacion vive aqui.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Estimate Flow -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon-box">ð</div>
+    <h2>Flujo de Presupuestos</h2>
+  </div>
+  <div class="flow-container">
+    <div class="flow-label">Deteccion automatica de nuevos presupuestos</div>
+    <div class="flow">
+      <div class="flow-step highlight">
+        <div class="fs-icon">ð</div>
+        <div class="fs-title">Presupuesto creado</div>
+        <div class="fs-desc">Bernard crea presupuesto confirmado en Holded</div>
+        <div class="fs-badge holded">Holded</div>
+      </div>
+      <div class="arrow-conn"><div class="line"></div><div class="dot"></div></div>
+      <div class="flow-step">
+        <div class="fs-icon">ð</div>
+        <div class="fs-title">n8n detecta</div>
+        <div class="fs-desc">Poll cada 10 min. Filtra borradores</div>
+        <div class="fs-badge n8n">n8n</div>
+      </div>
+      <div class="arrow-conn"><div class="line"></div><div class="dot"></div></div>
+      <div class="flow-step">
+        <div class="fs-icon">ð¤</div>
+        <div class="fs-title">Contacto + datos</div>
+        <div class="fs-desc">Upsert con numero de presupuesto e importe</div>
+        <div class="fs-badge ghl">GHL</div>
+      </div>
+      <div class="arrow-conn"><div class="line"></div><div class="dot"></div></div>
+      <div class="flow-step">
+        <div class="fs-icon">ð</div>
+        <div class="fs-title">Pipeline</div>
+        <div class="fs-desc">Oportunidad creada en "Presupuesto enviado"</div>
+        <div class="fs-badge ghl">GHL</div>
+      </div>
+      <div class="arrow-conn"><div class="line"></div><div class="dot"></div></div>
+      <div class="flow-step highlight">
+        <div class="fs-icon">ð±</div>
+        <div class="fs-title">Seguimiento</div>
+        <div class="fs-desc">WhatsApp dia 3, dia 7, cierre dia 10</div>
+        <div class="fs-badge ghl">GHL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top: 16px;">
+    <div class="note-title">Presupuesto revisado</div>
+    <div class="note-text">Si Bernard crea un nuevo presupuesto para el mismo cliente, el sistema automaticamente cancela el seguimiento anterior e inicia uno nuevo con los datos actualizados.</div>
+  </div>
+</div>
+
+<!-- Pipeline -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon-box">ð</div>
+    <h2>Pipeline de Presupuestos</h2>
+  </div>
+  <div class="pipeline-wrap">
+    <div class="pipeline">
+      <div class="pipe-stage s1">
+        <div class="ps-name">ð¤ Enviado</div>
+        <div class="ps-auto">Auto: al crear</div>
+      </div>
+      <div class="pipe-stage s2">
+        <div class="ps-name">â³ En espera</div>
+        <div class="ps-auto">Auto: +3 dias</div>
+      </div>
+      <div class="pipe-stage s3">
+        <div class="ps-name">â Aceptado</div>
+        <div class="ps-auto">Auto: pago detectado</div>
+      </div>
+      <div class="pipe-stage s4">
+        <div class="ps-name">ð° Hacer pago</div>
+        <div class="ps-auto">Manual</div>
+      </div>
+      <div class="pipe-stage s5">
+        <div class="ps-name">ð Finalizado</div>
+        <div class="ps-auto">Manual</div>
+      </div>
+      <div class="pipe-stage lost">
+        <div class="ps-name">â Perdido</div>
+        <div class="ps-auto">Auto: +10 dias</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon-box">â°</div>
+    <h2>Secuencia de Seguimiento</h2>
+  </div>
+  <div class="timeline-container">
+    <div class="tl">
+      <div class="tl-item">
+        <div class="tl-day">Dia 0 â Presupuesto enviado</div>
+        <div class="tl-action">Se crea la oportunidad automaticamente en el pipeline. El contacto recibe el presupuesto con el numero de documento y el importe guardados en su ficha.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-day">Dia 3 â Primer recordatorio</div>
+        <div class="tl-action">Se envia un mensaje recordando el presupuesto pendiente. La oportunidad se mueve a "En espera".</div>
+        <div class="tl-channels">
+          <span class="tl-ch wa">ð± WhatsApp</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-day">Dia 7 â Segundo recordatorio</div>
+        <div class="tl-action">Mensaje mas directo. Se ofrece ajustar el presupuesto si es necesario. Se crea tarea para Bernard.</div>
+        <div class="tl-channels">
+          <span class="tl-ch wa">ð± WhatsApp</span>
+          <span class="tl-ch task">ð Tarea interna</span>
+        </div>
+      </div>
+      <div class="tl-item danger">
+        <div class="tl-day">Dia 10 â Cierre automatico</div>
+        <div class="tl-action">Sin respuesta: la oportunidad se mueve a "Perdido" y se detienen todas las comunicaciones automaticas.</div>
+      </div>
+      <div class="tl-item success">
+        <div class="tl-day">Pago detectado â En cualquier momento</div>
+        <div class="tl-action">Si el cliente paga en cualquier punto de la secuencia, el sistema lo detecta automaticamente, mueve la oportunidad a "Aceptado", envia email de confirmacion y crea tarea de seguimiento.</div>
+        <div class="tl-channels">
+          <span class="tl-ch em">ð§ Email confirmacion</span>
+          <span class="tl-ch task">ð Tarea interna</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Flow -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon-box">ð³</div>
+    <h2>Deteccion de Pagos</h2>
+  </div>
+  <div class="flow-container">
+    <div class="flow-label">Deteccion automatica de facturas pagadas</div>
+    <div class="flow">
+      <div class="flow-step highlight">
+        <div class="fs-icon">ð³</div>
+        <div class="fs-title">Factura pagada</div>
+        <div class="fs-desc">Bernard convierte presupuesto a factura y registra el pago</div>
+        <div class="fs-badge holded">Holded</div>
+      </div>
+      <div class="arrow-conn"><div class="line"></div><div class="dot"></div></div>
+      <div class="flow-step">
+        <div class="fs-icon">ð</div>
+        <div class="fs-title">n8n valida</div>
+        <div class="fs-desc">Verifica que la factura corresponde al presupuesto en pipeline</div>
+        <div class="fs-badge n8n">n8n</div>
+      </div>
+      <div class="arrow-conn"><div class="line"></div><div class="dot"></div></div>
+      <div class="flow-step">
+        <div class="fs-icon">â</div>
+        <div class="fs-title">Aceptado</div>
+        <div class="fs-desc">Oportunidad se mueve automaticamente a "Aceptado"</div>
+        <div class="fs-badge ghl">GHL</div>
+      </div>
+      <div class="arrow-conn"><div class="line"></div><div class="dot"></div></div>
+      <div class="flow-step highlight">
+        <div class="fs-icon">ð§</div>
+        <div class="fs-title">Notificacion</div>
+        <div class="fs-desc">Email de confirmacion al equipo + tarea de seguimiento</div>
+        <div class="fs-badge ghl">GHL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note critical" style="margin-top: 16px;">
+    <div class="note-title">Flujo obligatorio de cobro</div>
+    <div class="note-text">Para que el pago se detecte, Bernard debe: 1) Convertir el presupuesto a factura en Holded, y 2) Marcar la factura como pagada. Pagar directamente sobre el presupuesto no es detectable por la API.</div>
+  </div>
+</div>
+
+<!-- Custom Fields -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon-box">ð</div>
+    <h2>Datos Sincronizados por Contacto</h2>
+  </div>
+  <div class="fields-grid">
+    <div class="field-card">
+      <div class="fc-label">Numero de presupuesto</div>
+      <div class="fc-value">Holded - Budget Number</div>
+      <div class="fc-merge">{{contact.holded__budget_number}}</div>
+    </div>
+    <div class="field-card">
+      <div class="fc-label">Importe del presupuesto</div>
+      <div class="fc-value">Holded - Budget Amount</div>
+      <div class="fc-merge">{{contact.holded__budget_amount}}</div>
+    </div>
+  </div>
+  <div class="note" style="margin-top: 16px;">
+    <div class="note-title">Uso en comunicaciones</div>
+    <div class="note-text">Estos campos se pueden usar en los templates de WhatsApp y email para personalizar los mensajes con el numero e importe exacto del presupuesto del cliente.</div>
+  </div>
+</div>
+
+<!-- Workflows -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon-box">â¡</div>
+    <h2>Estado de los Workflows</h2>
+  </div>
+  <div class="wf-wrap">
+    <table class="wf-table">
+      <thead>
+        <tr><th>Workflow</th><th>Plataforma</th><th>Estado</th><th>Funcion</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;">Estimate to Opportunity v2</td>
+          <td><span class="badge n8n">n8n</span></td>
+          <td><span class="badge active">Activo</span></td>
+          <td>Detecta presupuestos â Contacto + Budget Number + Amount en GHL</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Payment Detection v3</td>
+          <td><span class="badge n8n">n8n</span></td>
+          <td><span class="badge active">Activo</span></td>
+          <td>Detecta facturas pagadas â Valida contra pipeline â Tag en GHL</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Seguimiento presupuesto</td>
+          <td><span class="badge ghl">GHL</span></td>
+          <td><span class="badge active">Activo</span></td>
+          <td>WhatsApp dia 3 â En espera â WhatsApp dia 7 â Tarea â Perdido</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Pago detectado</td>
+          <td><span class="badge ghl">GHL</span></td>
+          <td><span class="badge active">Activo</span></td>
+          <td>Email confirmacion â Oportunidad a Aceptado â Tarea</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Tag Removed - Reset</td>
+          <td><span class="badge ghl">GHL</span></td>
+          <td><span class="badge active">Activo</span></td>
+          <td>Presupuesto revisado â Saca de seguimiento anterior</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  <div class="logo">Fluxo</div>
+  <div class="copy">Efecto Solar Â· Sistema de automatizacion Â· v2 Â· Marzo 2026</div>
+</footer>
+
+</body>
+</html>
