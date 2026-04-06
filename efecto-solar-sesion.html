@@ -795,6 +795,54 @@ footer a { color: var(--accent2); text-decoration: none; }
   text-transform: uppercase; margin-bottom: 12px;
 }
 
+/* ======================== GUIDE CARDS (expandable) ======================== */
+.guide-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+@media(max-width:700px) { .guide-cards { grid-template-columns: 1fr; } }
+.guide-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;
+  padding: 32px; cursor: pointer; transition: all .3s ease; position: relative; overflow: hidden;
+}
+.guide-card:hover { background: var(--card-hover); border-color: rgba(255,255,255,.12); transform: translateY(-2px); }
+.guide-card.active { border-color: rgba(108,92,231,.3); grid-column: 1 / -1; }
+.guide-card-header { display: flex; align-items: center; gap: 16px; }
+.guide-card-icon {
+  width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.guide-card-header h3 { font-size: 18px; font-weight: 700; }
+.guide-card-summary { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.guide-chip {
+  display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500;
+  background: rgba(255,255,255,.06); color: var(--gray); border: 1px solid rgba(255,255,255,.06);
+}
+.guide-card-toggle {
+  margin-top: 16px; font-size: 13px; font-weight: 600; color: var(--accent2);
+  display: flex; align-items: center; gap: 6px;
+}
+.guide-card-toggle svg { transition: transform .3s ease; }
+.guide-card.active .guide-card-toggle svg { transform: rotate(180deg); }
+.guide-card-content {
+  max-height: 0; overflow: hidden; transition: max-height .5s cubic-bezier(.16,1,.3,1), margin .3s ease;
+}
+.guide-card.active .guide-card-content { max-height: 2000px; margin-top: 28px; }
+.guide-card-content h4 {
+  font-size: 15px; font-weight: 700; margin-bottom: 12px; margin-top: 24px; color: var(--white);
+}
+.guide-card-content h4:first-child { margin-top: 0; }
+.guide-card-content p, .guide-card-content li {
+  font-size: 13.5px; color: rgba(255,255,255,.65); line-height: 1.7;
+}
+.guide-card-content ul, .guide-card-content ol { padding-left: 20px; margin-bottom: 12px; }
+.guide-card-content li { margin-bottom: 6px; }
+.guide-card-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+.guide-card-content th {
+  text-align: left; padding: 8px 12px; font-weight: 600; font-size: 11px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--accent2); border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.guide-card-content td { padding: 8px 12px; color: rgba(255,255,255,.6); border-bottom: 1px solid rgba(255,255,255,.04); }
+.guide-card-content .guide-divider {
+  height: 1px; background: rgba(255,255,255,.06); margin: 20px 0;
+}
+
 /* ======================== FILTER TABLE ======================== */
 .filter-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
@@ -990,13 +1038,13 @@ footer a { color: var(--accent2); text-decoration: none; }
 
     <div class="two-col" style="margin-top:48px">
       <div class="reveal d2">
-        <h3 style="font-size:16px;font-weight:700;margin-bottom:20px">Rutina matinal — 5 pasos</h3>
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:20px">Rutina matinal &mdash; 5 pasos</h3>
         <ol class="checklist">
           <li>Abre Fluxo (app.fluxo.consulting)</li>
           <li>Revisa tareas pendientes</li>
           <li>Revisa conversaciones sin responder</li>
           <li>Haz las llamadas asignadas</li>
-          <li>Etiqueta cada resultado</li>
+          <li>Selecciona el resultado de cada llamada</li>
         </ol>
       </div>
       <div class="reveal d3">
@@ -1005,12 +1053,143 @@ footer a { color: var(--accent2); text-decoration: none; }
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           </div>
           <h3>2 videos de formacion</h3>
-          <p>Video 1: Pipeline de presupuestos<br>Video 2: Pipeline de ventas<br><br>Mas una guia completa paso a paso.</p>
+          <p>Video 1: Pipeline de presupuestos<br>Video 2: Pipeline de ventas<br><br>Mas las guias completas aqui abajo.</p>
         </div>
       </div>
     </div>
 
-    <div class="comparison reveal d4">
+    <!-- ===== 2 GUIDE CARDS (expandable) ===== -->
+    <div class="guide-cards">
+
+      <!-- CARD 1: PRESUPUESTOS -->
+      <div class="guide-card reveal d3" id="guide-presupuestos" onclick="toggleGuide('guide-presupuestos')">
+        <div class="guide-card-header">
+          <div class="guide-card-icon" style="background:linear-gradient(135deg,var(--green),var(--green2))">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div>
+            <h3>Pipeline de Presupuestos</h3>
+            <p style="font-size:13px;color:var(--gray);margin-top:4px">Bernat / Marc &mdash; Automatico desde Holded</p>
+          </div>
+        </div>
+        <div class="guide-card-summary">
+          <span class="guide-chip">Holded &rarr; Fluxo auto</span>
+          <span class="guide-chip">WhatsApp dia 3 y 7</span>
+          <span class="guide-chip">Tarea de seguimiento</span>
+          <span class="guide-chip">Pago detectado</span>
+        </div>
+        <div class="guide-card-toggle">
+          <span>Ver guia completa</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="guide-card-content">
+          <h4>Como funciona</h4>
+          <ol>
+            <li><strong>Bernat o Marc crean un presupuesto en Holded</strong> (como siempre)</li>
+            <li><strong>El sistema lo detecta en menos de 10 minutos</strong> y crea una ficha en Fluxo</li>
+            <li><strong>Seguimiento automatico:</strong>
+              <ul>
+                <li>Dia 3: WhatsApp de recordatorio al cliente</li>
+                <li>Dia 7: Segundo WhatsApp + tarea para que llameis vosotros</li>
+              </ul>
+            </li>
+            <li><strong>Si el cliente paga</strong> &rarr; la gestora marca pagado en Holded &rarr; Fluxo lo detecta y mueve a &ldquo;Aceptado&rdquo;</li>
+          </ol>
+
+          <div class="guide-divider"></div>
+          <h4>Que tengo que hacer (Bernat / Marc)</h4>
+          <table>
+            <thead><tr><th>Situacion</th><th>Tu accion</th></tr></thead>
+            <tbody>
+              <tr><td>Crear presupuesto</td><td>Hazlo en Holded como siempre. <strong>Importante: confirmalo, no lo dejes en borrador</strong></td></tr>
+              <tr><td>Cliente paga</td><td>Asegurate de que la gestora marca la factura como pagada en Holded</td></tr>
+              <tr><td>Tarea de seguimiento aparece</td><td>Revisa si el cliente ha pagado: si si, gestiona el pedido. Si no, llama para no perder al cliente</td></tr>
+              <tr><td>Parar seguimiento</td><td>Mueve a &ldquo;Perdido&rdquo; en Fluxo, o ve a contacto &gt; Automations y quita la automatizacion</td></tr>
+              <tr><td>Nuevo presupuesto</td><td>Crealo normal. El sistema reengancha automaticamente</td></tr>
+            </tbody>
+          </table>
+
+          <div class="guide-divider"></div>
+          <h4>Que NO hacer</h4>
+          <ul>
+            <li>No muevas contactos manualmente entre columnas (el sistema lo hace)</li>
+            <li>No envies WhatsApp de seguimiento &mdash; es automatico</li>
+            <li>No uses Excel para trackear presupuestos &mdash; esta todo en Fluxo</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CARD 2: VENTAS -->
+      <div class="guide-card reveal d4" id="guide-ventas" onclick="toggleGuide('guide-ventas')">
+        <div class="guide-card-header">
+          <div class="guide-card-icon" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81"/><line x1="23" y1="1" x2="17" y2="7"/></svg>
+          </div>
+          <div>
+            <h3>Pipeline de Ventas</h3>
+            <p style="font-size:13px;color:var(--gray);margin-top:4px">David &mdash; Llamadas y prospection</p>
+          </div>
+        </div>
+        <div class="guide-card-summary">
+          <span class="guide-chip">109 leads Lusha</span>
+          <span class="guide-chip">10 resultados de llamada</span>
+          <span class="guide-chip">Calendario equipo</span>
+          <span class="guide-chip">Follow-up auto</span>
+        </div>
+        <div class="guide-card-toggle">
+          <span>Ver guia completa</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="guide-card-content">
+          <h4>Flujo diario de David</h4>
+          <ol>
+            <li>Abrir Fluxo &rarr; ver tareas de llamada pendientes</li>
+            <li>Llamar usando el telefono de Fluxo (sale con numero de empresa)</li>
+            <li>Seleccionar el resultado de la llamada (ver tabla abajo)</li>
+            <li>Si interesado &rarr; enviar link calendario de equipo por WhatsApp</li>
+          </ol>
+
+          <div class="guide-divider"></div>
+          <h4>Resultados de llamada (call dispositions)</h4>
+          <table>
+            <thead><tr><th>Resultado</th><th>Cuando</th><th>Que pasa</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--green)"><strong>Conectada positiva</strong></td><td>Lead muestra interes</td><td>Se mueve a Engaged, tarea para agendar con Marc/Bernat</td></tr>
+              <tr><td style="color:var(--blue)"><strong>Conectada neutral</strong></td><td>Hablo pero sin interes claro</td><td>Follow-up automatico</td></tr>
+              <tr><td style="color:var(--red)"><strong>Conectada negativa</strong></td><td>No le interesa</td><td>Se mueve a Lost</td></tr>
+              <tr><td style="color:var(--orange)"><strong>Conectada ocupado</strong></td><td>Interesado pero sin tiempo</td><td>Reintentar mas tarde</td></tr>
+              <tr><td><strong>Ocupado</strong></td><td>No pudo hablar</td><td>Reintentar</td></tr>
+              <tr><td><strong>No contesta</strong></td><td>No cogio el telefono</td><td>Reintento con email + WhatsApp</td></tr>
+              <tr><td><strong>Mensaje de voz</strong></td><td>Salto el buzon</td><td>Dejar mensaje o reintentar</td></tr>
+              <tr><td style="color:var(--pink)"><strong>Gatekeeper</strong></td><td>Contesto recepcion</td><td>Conseguir contacto directo</td></tr>
+              <tr><td><strong>Numero equivocado</strong></td><td>No es la persona</td><td>Verificar datos</td></tr>
+              <tr><td style="color:var(--accent2)"><strong>Reunion agendada</strong></td><td>Reunion cerrada con Marc o Bernat</td><td>Siguiente etapa</td></tr>
+            </tbody>
+          </table>
+
+          <div class="guide-divider"></div>
+          <h4>Como agendar reunion</h4>
+          <ol>
+            <li>Lead interesado &rarr; resultado &ldquo;Conectada positiva&rdquo;</li>
+            <li>Envia el <strong>link del calendario de equipo</strong> por WhatsApp</li>
+            <li>GHL asigna a Marc o Bernat automaticamente (Round Robin)</li>
+            <li>El sistema envia recordatorios automaticos al lead</li>
+          </ol>
+
+          <div class="guide-divider"></div>
+          <h4>Sobre los telefonos</h4>
+          <ul>
+            <li>Algunos telefonos de Lusha son centralitas o lineas cambiadas &mdash; es normal</li>
+            <li>Tasa de contacto tipica en B2B: 30-40%</li>
+            <li>Si te dicen &ldquo;como tienes mi numero&rdquo;: <em>&ldquo;Encontre vuestro contacto en un directorio empresarial. Trabajo con empresas del sector [X] y creo que podemos ayudaros a reducir vuestra factura energetica.&rdquo;</em></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+    <!-- ===== END GUIDE CARDS ===== -->
+
+    <div class="comparison reveal d5" style="margin-top:48px">
       <div class="comparison-card before">
         <div class="comparison-label" style="color:var(--red)">Antes</div>
         <p style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.7">Excel, WhatsApp manual, seguimiento de cabeza</p>
@@ -1755,6 +1934,23 @@ footer a { color: var(--accent2); text-decoration: none; }
     container.appendChild(p);
   }
 })();
+
+// ====== Guide card toggle ======
+function toggleGuide(id) {
+  const card = document.getElementById(id);
+  const wasActive = card.classList.contains('active');
+  // Close all cards first
+  document.querySelectorAll('.guide-card').forEach(c => c.classList.remove('active'));
+  // Toggle clicked card
+  if (!wasActive) {
+    card.classList.add('active');
+    card.querySelector('.guide-card-toggle span').textContent = 'Cerrar guia';
+    // Smooth scroll to card
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
+  // Reset toggle text on closed cards
+  document.querySelectorAll('.guide-card:not(.active) .guide-card-toggle span').forEach(s => s.textContent = 'Ver guia completa');
+}
 
 // ====== Reveal on scroll ======
 const io = new IntersectionObserver((entries) => {
